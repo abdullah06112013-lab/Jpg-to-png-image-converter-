@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>JPG to PNG Converter</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background: #f4f6f8;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px 20px;
+  }
+  .card {
+    background: white;
+    border-radius: 12px;
+    padding: 32px;
+    max-width: 420px;
+    width: 100%;
+    text-align: center;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+  }
+  h1 {
+    font-size: 22px;
+    margin-bottom: 8px;
+    color: #222;
+  }
+  p {
+    color: #555;
+    font-size: 14px;
+    margin-bottom: 24px;
+  }
+  input[type="file"] {
+    margin-bottom: 16px;
+  }
+  #preview {
+    margin: 16px 0;
+  }
+  #preview img {
+    max-width: 100%;
+    border-radius: 8px;
+  }
+  #downloadLink {
+    display: none;
+    background: #2d7dfb;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: bold;
+    margin-top: 8px;
+  }
+  #status {
+    font-size: 13px;
+    color: #2a9d57;
+    margin-top: 10px;
+  }
+</style>
+</head>
+<body>
+
+<div class="card">
+  <h1>JPG to PNG converter</h1>
+  <p>Pick a JPG photo from your computer and turn it into a PNG.</p>
+
+  <input type="file" id="fileInput" accept=".jpg,.jpeg">
+
+  <div id="preview"></div>
+  <div id="status"></div>
+  <a id="downloadLink">Download PNG</a>
+
+  <canvas id="canvas" style="display:none;"></canvas>
+</div>
+
+<script>
+  const fileInput = document.getElementById('fileInput');
+  const preview = document.getElementById('preview');
+  const status = document.getElementById('status');
+  const downloadLink = document.getElementById('downloadLink');
+  const canvas = document.getElementById('canvas');
+
+  fileInput.addEventListener('change', function (e) {
+    const file = e.target.files[0];
+    if (!file) {
+      return;
+    }
+
+    status.textContent = '';
+    downloadLink.style.display = 'none';
+
+    const reader = new FileReader();
+    reader.onload = function (event) {
+      const img = new Image();
+      img.onload = function () {
+        canvas.width = img.width;
+        canvas.height = img.height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0);
+
+        preview.innerHTML = '';
+        const previewImg = document.createElement('img');
+        previewImg.src = img.src;
+        preview.appendChild(previewImg);
+
+        canvas.toBlob(function (blob) {
+          const url = URL.createObjectURL(blob);
+          const newName = file.name.replace(/\.(jpg|jpeg)$/i, '.png');
+
+          downloadLink.href = url;
+          downloadLink.download = newName;
+          downloadLink.textContent = 'Download ' + newName;
+          downloadLink.style.display = 'inline-block';
+          status.textContent = 'Converted! Click the button to save it.';
+        }, 'image/png');
+      };
+      img.src = event.target.result;
+    };
+    reader.readAsDataURL(file);
+  });
+</script>
+
+</body>
+</html>
