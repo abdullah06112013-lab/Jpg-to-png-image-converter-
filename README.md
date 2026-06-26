@@ -60,4 +60,4 @@ The converted PNG is saved right next to the original file.
 
 This project is free to use and modify.
 ## Other Projects
-Check out my [JPG to PNG Converter](https://github.com/abdullah06112013-lab/Language-converter) too!
+Check out my [Language translater](https://github.com/abdullah06112013-lab/Language-converter) too!
